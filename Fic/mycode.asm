@@ -63,10 +63,10 @@ swapMinHeapNode:
     mov swapminheapnode_b, ax
     mov ax, 0
     mov bx, swapminheapnode_a
-    mov swapminheapnode_t_data, minheapnode_char_data[bx]
-    mov swapminheapnode_t_freq, minheapnode_unsigned_freq[bx]
-    mov swapminheapnode_t_left_index, minheapnode_minheapnode_left_index[bx]
-    mov swapminheapnode_t_right_index, minheapnode_minheapnode_right_index[bx]
+    ;mov swapminheapnode_t_data, minheapnode_char_data[bx]
+    ;mov swapminheapnode_t_freq, minheapnode_unsigned_freq[bx]
+    ;mov swapminheapnode_t_left_index, minheapnode_minheapnode_left_index[bx]
+    ;mov swapminheapnode_t_right_index, minheapnode_minheapnode_right_index[bx]
     
     
     mov sp, bp
@@ -129,12 +129,7 @@ createMinHeap: ;v
     mov sp, bp
     pop bp
     ret
-;##################################################
-;#
-;##################################################
 
-swapMinHeapNode:
-    ret
 
 ;##################################################
 ;#
@@ -170,10 +165,10 @@ insertMinHeap:
     mov bp, sp 
     and sp, 0xfff0
     mov bx, [bp + 4];  MinHeapNode* minHeapNode index
-    
-    mov ax, minheap_unsigned_size
+    mov ah, 0
+    mov al, minheap_unsigned_size
     inc ax
-    mov minheap_unsigned_size, ax
+    mov minheap_unsigned_size, al
 
     mov cx, ax
     dec cx
@@ -185,9 +180,9 @@ insertMinHeap:
         dec bx
         mov ax, bx
         mov bx, 2
-        sub bh
+        sub ax, bx
         mov bx, ax
-        mov ax, minheapnode_unsigned_freq[bx]
+        mov al, minheapnode_unsigned_freq[bx]
 
 insertMinHeap_loop1:
     mov sp, bp
@@ -207,14 +202,15 @@ createAndBuildMinHeap:
 createAndBuildMinHeap_loop2:    
     cmp ch, cl  
     je createAndBuildMinHeap_loop1 
-        mov bx, cx
-        mov ax, MINHEAPNODE_CHAR_DATA[bx]
+        mov bx, cx 
+        mov ah, 0
+        mov al, MINHEAPNODE_CHAR_DATA[bx]
         push ax
-        mov ax, MINHEAPNODE_UNSIGNED_FREQ[bx]
+        mov ah, MINHEAPNODE_UNSIGNED_FREQ[bx]
         push ax
         push cx
         call newNode
-        mov minheap_minheapnode_array[bx], bx
+        mov minheap_minheapnode_array[bx], bh
         pop bx
         inc ch 
     jmp createAndBuildMinHeap_loop2
@@ -228,8 +224,9 @@ createAndBuildMinHeap_loop1:
 ;#
 ;##################################################        
 
-buildMinHeap:
-    mov ax, MINHEAP_UNSIGNED_SIZE
+buildMinHeap: 
+    mov ah, 0 
+    mov al, MINHEAP_UNSIGNED_SIZE
     dec ax
     dec ax
     mov cx, 0x0002 
@@ -305,7 +302,7 @@ minheapify_loop2:
     mov bx, minheapify_idx
     cmp ax, bx
     je minheapify_loop3
-       mov al, MINHEAPIFY_SMALLEST
+       mov ax, MINHEAPIFY_SMALLEST
        push ax
        call minHeapify
        pop bx  
@@ -324,36 +321,36 @@ buildHuffmanTree:
     call createAndBuildMinHeap
     pop bx
     mov ch, 1
-buildHuffmanTree_tag1
+buildHuffmanTree_tag1:
     mov cl, minheap_unsigned_size
     cmp ch, cl
     je buildHuffmanTree_loop1
         call extractMin ; rezultatul de la extragere se va salva in registrul cx 
         pop bx
-        mov buildhuffmantree_left, cx
+        mov buildhuffmantree_left, cl
 
         call extractMin
         pop bx
-        mov buildhuffmantree_right, cx
+        mov buildhuffmantree_right, cl
         
         mov al, '$'
         push ax
         mov bx, 0
-        mov bx, buildhuffmantree_left
+        mov bl, buildhuffmantree_left
         mov al, minheapnode_unsigned_freq[bx]
-        mov bx, buildhuffmantree_right
+        mov bl, buildhuffmantree_right
         mov cl, minheapnode_unsigned_freq[bx]
         add ax, bx
         push ax
         mov ax, 0
-        mov ax, minheap_unsigned_size
+        mov al, minheap_unsigned_size
         push ax
         call newNode
         pop bx
         mov bx, ax
-        mov ax, buildhuffmantree_left
+        mov al, buildhuffmantree_left
         mov minheapnode_minheapnode_left_index[bx], ax
-        mov ax, buildhuffmantree_right
+        mov al, buildhuffmantree_right
         mov minheapnode_minheapnode_right_index[bx], ax
         push bx
         call insertMinHeap
