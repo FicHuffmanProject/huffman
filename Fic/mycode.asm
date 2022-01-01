@@ -246,6 +246,30 @@ buildMinHeap_loop1:
 ;#
 ;##################################################   
 
+printArr:
+    push bp
+    mov bp, sp 
+    and sp, 0xfff0
+    mov cx, [bp + 4]
+
+printArrLopp:
+    cmp ch, cl
+    je printArrFinal
+    mov bx, 0
+    mov bl, ch
+    mov dx, MinHeap_MinHeapNode_array[bx]
+    mov ah, 2
+    int 21h
+    inc ch
+    jmp printArrLopp
+
+printArrFinal:
+    mov dl, 0x0A
+    int 21h
+
+ret
+
+
 minHeapify: 
     push bp
     mov bp, sp 
