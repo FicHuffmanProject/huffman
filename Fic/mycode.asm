@@ -16,9 +16,9 @@ org 100h
 ;  MinHeap (or Huffman tree) 
     MinHeap_unsigned_size db 0 
     MinHeap_unsigned_capacity db 0 
-    MinHeap_MinHeapNode_array db 100 dup(?)
+    MinHeap_MinHeapNode_array dw 100 dup(?)
 ;  HuffmanCodes fun var
-    HuffmanCodes_arr db 100 dup(?)
+    HuffmanCodes_arr dw 100 dup(?)
     HuffmanCodes_top db 0
 ;  buildHuffmanTree fun var
     buildHuffmanTree_left db 0
@@ -49,6 +49,14 @@ org 100h
     swapMinHeapNode_t_freq db 0
     swapMinHeapNode_t_left_index dw 0
     swapMinHeapNode_t_right_index dw 0
+;   extractMin
+    extractMin_t_data db 0
+    extractMin_t_freq db 0
+    extractMin_t_left_index dw 0
+    extractMin_t_right_index dw 0
+;   printCodes fun var
+    printCodes_top dw 0
+    printCodes_root dw 0
 
 .code 
 jmp main   
@@ -107,10 +115,6 @@ swapMinHeapNode:
 
     mov ax, swapminheapnode_t_right_index
     mov minheapnode_minheapnode_right_index[bx], ax
-    
-    
-
-    
     
     mov sp, bp
     pop bp
@@ -183,12 +187,19 @@ extractMin:
     mov bh, 0
     mov bl, minheap_unsigned_size
     dec bl
-    mov al, minheap_minheapnode_array[bx]
+    mov ax, minheap_minheapnode_array[bx]
     mov bx, 0
-    mov minheap_minheapnode_array[bx], al
+    mov minheap_minheapnode_array[bx], ax
 
     mov al, minheap_unsigned_size
     dec al
+    mov minheap_unsigned_size, al
+    
+    mov bl, al
+    mov bh, 0
+    mov ax, minheap_minheapnode_array[bx]
+    mov bx, 0
+    mov minheap_minheapnode_array[bx], ax
 
     mov bx, 0
     push bx
@@ -196,7 +207,7 @@ extractMin:
     pop bx
 
     mov bx, 0
-    mov bl, MinHeap_MinHeapNode_array[bx]
+    mov bx, MinHeap_MinHeapNode_array[bx]
     mov cx, bx
     
     ret
@@ -253,7 +264,7 @@ createAndBuildMinHeap_loop2:
         push ax
         push cx
         call newNode
-        mov minheap_minheapnode_array[bx], bh
+        mov minheap_minheapnode_array[bx], bx
         pop bx
         inc ch 
     jmp createAndBuildMinHeap_loop2
@@ -300,7 +311,7 @@ printArrLopp:
     je printArrFinal
     mov bx, 0
     mov bl, ch
-    mov dl, MinHeap_MinHeapNode_array[bx]
+    mov dx, MinHeap_MinHeapNode_array[bx]
     mov ah, 2
     int 21h
     inc ch
@@ -333,11 +344,11 @@ minHeapify:
     cmp bh, ah
     jl minheapify_loop1
         mov bx, minheapify_left
-        mov bl, minheap_minheapnode_array[bx] 
+        mov bx, minheap_minheapnode_array[bx] 
         mov bh, 0
         mov ah, MINHEAPNODE_UNSIGNED_FREQ[bx]
         mov bx, minheapify_smallest
-        mov bl, minheap_minheapnode_array[bx]
+        mov bx, minheap_minheapnode_array[bx]
         mov ch, MINHEAPNODE_UNSIGNED_FREQ[bx]
         cmp ch, ah
         jl minheapify_loop1
@@ -353,11 +364,11 @@ minheapify_loop1:
     cmp bl, al
     jl minheapify_loop2
         mov bx, minheapify_right
-        mov bl, minheap_minheapnode_array[bx]
+        mov bx, minheap_minheapnode_array[bx]
         mov bh, 0
         mov al, MINHEAPNODE_UNSIGNED_FREQ[bx]
         mov bx, minheapify_smallest
-        mov bl, minheap_minheapnode_array[bx]
+        mov bx, minheap_minheapnode_array[bx]
         mov cl, MINHEAPNODE_UNSIGNED_FREQ[bx]
         cmp cl, al
         jl minheapify_loop2
@@ -424,11 +435,95 @@ buildHuffmanTree_tag1:
         pop bx
         jmp buildHuffmanTree_tag1
 buildHuffmanTree_loop1:
+    call extractMin ; rezultatul de la extragere se va salva in registrul cx 
+    pop bx
 
     ret
 ;##################################################
 ;#
 ;##################################################
+HuffmanCodes:
+    call buildHuffmanTree
+    pop bx
+    mov ax, 0
+    push ax
+    call extractMin
+    pop bx
+    push cx
+    call printCodes
+    pop bx
+
+    ret
+;##################################################
+;#
+;##################################################
+printCodes:
+    push bp
+    mov bp, sp 
+    and sp, 0xfff0
+    mov dx, [bp + 6]; primul argument 
+    mov printcodes_top, dx
+    mov dx, [bp + 4]; second argument 
+    mov printcodes_root, dx
+    mov bx, dx
+    mov ax, -1
+    mov bx, minheapnode_minheapnode_left_index[bx]
+    cmp ax, bx
+    jne printCodes_loop1
+        mov ax, 1
+        mov bx, printcodes_top
+        mov huffmancodes_arr[bx], ax
+        inc ax
+        push ax
+        mov bx, printcodes_root
+        mov ax, minheapnode_minheapnode_left_index[bx]
+        push ax
+        call printCodes
+        pop bx
+printCodes_loop1:
+    mov bx, printcodes_root
+    mov ax, -1
+    mov bx, minheapnode_minheapnode_right_index[bx]
+    cmp ax, bx
+    jne printCodes_loop2
+        mov ax, 1
+        mov bx, printcodes_top
+        mov huffmancodes_arr[bx], ax
+        inc ax
+        push ax
+        mov bx, printcodes_root
+        mov ax, minheapnode_minheapnode_right_index[bx]
+        push ax
+        call printCodes
+        pop bx
+printCodes_loop2:
+    mov bx, printcodes_root
+    mov cx, -1
+    mov ax, minheapnode_minheapnode_left_index[bx]
+    cmp cx, ax
+    je printCodes_loop3
+        mov ax, minheapnode_minheapnode_right_index[bx]
+        cmp cx, ax
+        je printCodes_loop3
+            mov dl, minheapnode_char_data[bx]
+            mov ah, 2
+            int 21h
+            mov dl, ":"
+            int 21h
+            mov dl, " "
+            int 21h
+            mov ax, printcodes_top
+            push ax
+            call printArr
+            pop bx
+
+
+printCodes_loop3:
+
+    
+    mov sp, bp
+    pop bp
+    ret 
      
     
 main: proc  

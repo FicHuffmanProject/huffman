@@ -107,7 +107,7 @@ void minHeapify(struct MinHeap* minHeap, int idx)
  
 // A utility function to check
 // if size of heap is 1 or not
-int isSizeOne(struct MinHeap* minHeap) //x
+int isSizeOne(struct MinHeap* minHeap) 
 {
  
     return (minHeap->size == 1);
