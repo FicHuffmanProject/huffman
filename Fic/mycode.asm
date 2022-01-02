@@ -75,7 +75,23 @@ swapMinHeapNode:
 
     mov ax, minheapnode_minheapnode_right_index[bx]
     mov swapminheapnode_t_right_index, ax
-
+    
+    mov bx, swapminheapnode_b
+    mov cl, minheapnode_char_data[bx]
+    mov bx, swapminheapnode_a
+    mov minheapnode_char_data[bx], cl
+    mov bx, swapminheapnode_b
+    mov cl, minheapnode_unsigned_freq[bx]
+    mov bx, swapminheapnode_a
+    mov minheapnode_unsigned_freq[bx], cl
+    mov bx, swapminheapnode_b
+    mov cx, minheapnode_minheapnode_left_index[bx]
+    mov bx, swapminheapnode_a
+    mov minheapnode_minheapnode_left_index[bx], cx
+    mov bx, swapminheapnode_b
+    mov cx, minheapnode_minheapnode_right_index[bx]
+    mov bx, swapminheapnode_a
+    mov minheapnode_minheapnode_right_index[bx], cx
 
 
     mov bx, swapminheapnode_b
@@ -91,6 +107,9 @@ swapMinHeapNode:
 
     mov ax, swapminheapnode_t_right_index
     mov minheapnode_minheapnode_right_index[bx], ax
+    
+    
+
     
     
     mov sp, bp
@@ -281,7 +300,7 @@ printArrLopp:
     je printArrFinal
     mov bx, 0
     mov bl, ch
-    mov dx, MinHeap_MinHeapNode_array[bx]
+    mov dl, MinHeap_MinHeapNode_array[bx]
     mov ah, 2
     int 21h
     inc ch
@@ -414,8 +433,32 @@ buildHuffmanTree_loop1:
     
 main: proc  
       
-    call createAndBuildMinHeap
+    mov ax, 'a'
+    mov bx, 0
+    push bx
+    mov minheapnode_char_data[bx], al
+    mov minheapnode_unsigned_freq[bx], al
+    mov minheapnode_minheapnode_left_index[bx], ax
+    mov minheapnode_minheapnode_right_index[bx], ax
+    mov ax, 'b'
+    mov bx, 1
+    push bx
+    mov minheapnode_char_data[bx], al
+    mov minheapnode_unsigned_freq[bx], al
+    mov minheapnode_minheapnode_left_index[bx], ax
+    mov minheapnode_minheapnode_right_index[bx], ax
+    call swapMinHeapNode
     pop bx
+    mov bx, 1  
+    mov ah, 2
+    mov dl, minheapnode_char_data[bx]
+    int 21h  
+    mov dl, minheapnode_unsigned_freq[bx]
+    int 21h
+    mov dx, minheapnode_minheapnode_left_index[bx]
+    int 21h
+    mov dx, minheapnode_minheapnode_right_index[bx]
+    int 21h
 endp
 
 
