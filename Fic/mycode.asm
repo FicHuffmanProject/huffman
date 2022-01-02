@@ -63,10 +63,34 @@ swapMinHeapNode:
     mov swapminheapnode_b, ax
     mov ax, 0
     mov bx, swapminheapnode_a
-    ;mov swapminheapnode_t_data, minheapnode_char_data[bx]
-    ;mov swapminheapnode_t_freq, minheapnode_unsigned_freq[bx]
-    ;mov swapminheapnode_t_left_index, minheapnode_minheapnode_left_index[bx]
-    ;mov swapminheapnode_t_right_index, minheapnode_minheapnode_right_index[bx]
+
+    mov al, minheapnode_char_data[bx]
+    mov swapminheapnode_t_data, al
+
+    mov al, minheapnode_unsigned_freq[bx]
+    mov swapminheapnode_t_freq, al
+
+    mov ax, minheapnode_minheapnode_left_index[bx]
+    mov swapminheapnode_t_left_index, ax
+
+    mov ax, minheapnode_minheapnode_right_index[bx]
+    mov swapminheapnode_t_right_index, ax
+
+
+
+    mov bx, swapminheapnode_b
+
+    mov al, swapminheapnode_t_data
+    mov minheapnode_char_data[bx], al
+
+    mov al, swapminheapnode_t_freq
+    mov minheapnode_unsigned_freq[bx], al
+
+    mov ax, swapminheapnode_t_left_index
+    mov minheapnode_minheapnode_left_index[bx], ax
+
+    mov ax, swapminheapnode_t_right_index
+    mov minheapnode_minheapnode_right_index[bx], ax
     
     
     mov sp, bp
