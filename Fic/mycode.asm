@@ -62,6 +62,9 @@ org 100h
 jmp main   
 
 swapMinHeapNode:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -139,6 +142,9 @@ func:
 ;##################################################
 
 newNode: ;v
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -166,6 +172,9 @@ newNode: ;v
 ;##################################################
 
 createMinHeap: ;v
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -215,6 +224,9 @@ extractMin:
 ;#
 ;##################################################
 insertMinHeap:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -246,7 +258,10 @@ insertMinHeap_loop1:
 ;#
 ;##################################################
 
-createAndBuildMinHeap:  
+createAndBuildMinHeap:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0  
     mov al, size
     push ax
     call createMinHeap
@@ -278,7 +293,10 @@ createAndBuildMinHeap_loop1:
 ;#
 ;##################################################        
 
-buildMinHeap: 
+buildMinHeap:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0 
     mov ah, 0 
     mov al, MINHEAP_UNSIGNED_SIZE
     dec ax
@@ -301,6 +319,9 @@ buildMinHeap_loop1:
 ;##################################################   
 
 printArr:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -321,10 +342,15 @@ printArrFinal:
     mov dl, 0x0A
     int 21h
 
-ret
+    mov sp, bp
+    pop bp
+    ret
 
 
-minHeapify: 
+minHeapify:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0 
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -396,6 +422,9 @@ minheapify_loop3:
 
 
 buildHuffmanTree:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     call createAndBuildMinHeap
     pop bx
     mov ch, 1
@@ -443,6 +472,9 @@ buildHuffmanTree_loop1:
 ;#
 ;##################################################
 HuffmanCodes:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     call buildHuffmanTree
     pop bx
     mov ax, 0
@@ -458,6 +490,9 @@ HuffmanCodes:
 ;#
 ;##################################################
 printCodes:
+    mov ax, 0
+    mov bx, 0
+    mov cx, 0
     push bp
     mov bp, sp 
     and sp, 0xfff0
@@ -528,33 +563,15 @@ printCodes_loop3:
     
 main: proc  
       
-    mov ax, 'a'
-    mov bx, 0
-    push bx
-    mov minheapnode_char_data[bx], al
-    mov minheapnode_unsigned_freq[bx], al
-    mov minheapnode_minheapnode_left_index[bx], ax
-    mov minheapnode_minheapnode_right_index[bx], ax
-    mov ax, 'b'
-    mov bx, 1
-    push bx
-    mov minheapnode_char_data[bx], al
-    mov minheapnode_unsigned_freq[bx], al
-    mov minheapnode_minheapnode_left_index[bx], ax
-    mov minheapnode_minheapnode_right_index[bx], ax
-    call swapMinHeapNode
+    
+    call HuffmanCodes
     pop bx
-    mov bx, 1  
-    mov ah, 2
-    mov dl, minheapnode_char_data[bx]
-    int 21h  
-    mov dl, minheapnode_unsigned_freq[bx]
-    int 21h
-    mov dx, minheapnode_minheapnode_left_index[bx]
-    int 21h
-    mov dx, minheapnode_minheapnode_right_index[bx]
-    int 21h
+    
 endp
+
+
+
+
 
 
 
